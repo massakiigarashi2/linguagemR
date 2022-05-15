@@ -1,0 +1,324 @@
+---
+title: "R Notebook AD10 - INTRODUÇÃO A LINGUAGEM R (Parte 2.2) - Prof. Massaki"
+output:
+  html_notebook: default
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+
+00) Manipulação de memória para bases de dados muito grande
+memory.size () relata a alocação de memória atual ou máxima da função malloc usada nesta versão de R.
+memory.limit () reporta ou aumenta o limite em vigor na alocação total.
+```{r}
+memory.size()
+memory.limit(size=32000)
+```
+
+```{r}
+help(read.csv)
+```
+
+00) OBSERVAÇÕES IMPORTANTES:
+
+- Os arquivos de anotações conhecidos como R Notebook apresetam uma espécie de PEDAÇO DE EXECUÇÃO, popularmente ocnhecidos como CHUNK. Para adicionar um novo CHUNK basta pressionar Ctrl + Alt + I
+
+- Ao pressionar Ctrl + L na ABA CONSOLe você consege limpar o console que exibe o histórico de operações executadas
+- É importante saber que na linguagem R NÃO É NECESSÁRIO DECLARAR O TIPO DA VARIÁVEL assim como ocorre na linguagem de programação C++. A linguagem R, por padrão, decide qual o tipo mais adequado de dados a utilizar, baseando-se no contexto. Se uma string de texto for atribuída a uma variável, essa variável será do tipo caractere; caso um número inteiro seja atribuído, será um tipo numérico, e assim por diante. Devido a esta funcionalidade, a linguagem R é conhecida por ser fracamente tipada.
+- Na linguagem R será praticamente impossível você não necessitar fazer uso de bibliotecas e pacotes de funções previamente programadas por outros usuários; portanto, você precisa saber que a principal fonte, e também a fonte oficial destes pacotes é denominada Repositório CRAN (https://cran.r-project.org/).
+- A forma mais fácil de instalar uma pacote [e através da ABA PACKAGES, clicando na OPÇÃO INSTALL
+- A seguir, listarei outras formas de se instalar, atribuir e requisitar estes pacotes:
+
+install.packages(NomeDoPacote)
+library(NomeDoPacote)
+require(NomeDoPacote)
+
+- Também é possível inserir manualmente pacotes através de arquivos.TAR, basta ir na opção install em Packages e mudar a opção para Package ARchive File (.zip, .tar, .gz)
+
+```{r}
+# Needed <- c("tm", "SnowballC", "RColorBrewer", "ggplot2", "wordcloud", "biclust", "cluster", "igraph", "fpc")
+# install.packages(Needed, dependencies = TRUE)
+library("biclust")
+library("igraph")
+library("fpc")
+library("tidyverse")
+library("dplyr")
+library("tm")
+library("cluster")
+library("SnowballC")
+library("wordcloud")
+
+require("biclust")
+require("igraph")
+require("fpc")
+require("tidyverse")
+require("dplyr")
+require("tm")
+require("cluster")
+require("SnowballC")
+require("wordcloud")
+```
+
+```{r}
+library(readxl)
+require(readxl)
+
+```
+
+
+PASSO 01) Definir a PASTA DE TRABALHO e IMPORTAR o ARQUIVO DA BASE DE DADOS
+---------------------------------------------------------------------------------------------------------------------
+01.0) IMPORTAÇÃO DE ARQUIVOS .CSV
+Função read.csv (Para bases em ingles, ou seja, separação decimal por PONTO)
+Função read.csv2(Para bases em Português, ou seja, separação decimal por VÍRGULA)
+As funções read Lêem um arquivo em formato CSV de tabela e cria um quadro de dados a partir dele, correspondendo a linhas e variáveis num arquivo. A base de dados importada passa a ser um data.frame
+--------------------------------------------------------------------------------------------------------------------
+O data.frame é talvez um dos conceitos mais importantes na linguagem R. No data.frame cada coluna representa uma variável e cada linha uma observação, ou seja, uma leitura desta variável.O data.frame é um quadro de dados, esses quadros compartilham muitas das propriedades de matrizes e de listas, usadas como a estrutura de dados fundamental pela maioria dos softwares de modelagem de R.
+É importante saber que para acessar individualmente as colunas de um data.frame basta colocar o NOME_DO_DATA.FRAME seguido do SÍMBOLO $
+```{r}
+# "G:\MCK8 - TIC21\TIC09 - ProgramacaoR_Cybersecurity\R_language\MovimentoFinanceiro.xlsx"
+setwd("G:\MCK8 - TIC21//TIC09 - ProgramacaoR_Cybersecurity//R_language")
+RetornoInvestimento.df <- 
+read.csv("G:\MCK8 - TIC21//TIC09 - ProgramacaoR_Cybersecurity//R_language//MovimentoFinanceiro.csv",
+header = TRUE, 
+sep = ",", 
+quote = "\"", 
+dec = ".", 
+fill = TRUE, 
+comment.char = "", 
+#nrows = 7
+)
+```
+
+01.1) IMPORTAÇÃO DE ARQUIVOS .XLS
+A função readxl_example usa o caminho e o nome do arquivo entre aspas para importar o arquvo da base de dados
+Ela é seguida da função read_excel para que seja possível a manipulação das planilhas idividuais de uma pasta de trabalho
+```{r}
+library(readxl)
+setwd("G://MCK8 - TIC21//TIC09 - ProgramacaoR_Cybersecurity//R_language")
+BaseDados <- read_excel("G://MCK8 - TIC21//TIC09 - ProgramacaoR_Cybersecurity//R_language//MovimentoFinanceiro.xlsx",  
+                        range = "A3:G56", 
+                        col_names = TRUE, 
+                        col_types = c("date","text", "text", "text", "text", "numeric", "text"), 
+                        na = "", 
+                        trim_ws = TRUE,
+                        skip = 1,
+                        #n_max = 5,
+                        guess_max = min(1000, 5),
+                        progress = readxl_progress(),
+                        .name_repair = "unique")
+BaseDados
+```
+
+### Ler Base de dados Excel no R Studio Cloud
+# DICA: Antes sempre importe a base de dados manualmente (clicando com o mouse sobre o arquivo em Files) para evitar erros
+```{r}
+library(readxl)
+BaseDados <- read_excel("MovimentoFinanceiro.xlsx", 
+                        sheet = "Dados", 
+                        skip = 1,
+                        col_names = TRUE, 
+                        col_types = c("date","text", "text", "text", "text", "numeric", "text"), 
+                        na = "", 
+                        trim_ws = TRUE,
+                        #n_max = 5,
+                        guess_max = min(1000, 5),
+                        progress = readxl_progress(),
+                        .name_repair = "unique")
+View(MovimentoFinanceiro)
+```
+
+```{r}
+BaseDados <- BaseDados[(-1),]
+BaseDados
+```
+
+
+
+```{r}
+names(BaseDados)
+```
+
+
+01.2) Função View(NomeDoDataFrame)
+A função View invoca um visualizador de dados no estilo planilha em um objeto R semelhante a uma matriz. 
+```{r}
+View(BaseDados)
+```
+
+02)Função summary
+A função summary (resumo) é uma função genérica usada para produzir resumos de resultados dos resultados de várias funções de ajuste de modelo. A função invoca métodos específicos que dependem da classe do primeiro argumento.
+```{r}
+resumo <- summary(BaseDados)
+resumo
+```
+
+03) As Funções head e tail 
+Retornam, respectivamente, a primeira ou a última parte do data.frame. 
+Estas funções são muito úteis principalmente quando se tem uma base de dados muito grande
+```{r}
+#Teste da função head
+BaseDados.H <- head(BaseDados)
+BaseDados.H
+
+#Teste da função tail
+BaseDados.T <- tail(BaseDados)
+BaseDados.T
+```
+
+04) Função order
+A função order retorna uma permutação que reorganiza seu primeiro argumento em ordem crescente ou decrescente, quebrando os laços por argumentos adicionais. sort.list faz o mesmo, usando apenas um argumento. Veja os exemplos de como usar essas funções para classificar quadros de dados, etc.
+```{r}
+BaseDadosOrdenada <- BaseDados[order(BaseDados$Projeto,BaseDados$Data),]
+BaseDadosOrdenada
+```
+
+05) Ordenação de valores usando a função sort
+Classifica (ou ordena) um VETOR ou fator (parcialmente) em ordem crescente ou decrescente. Para ordenar ao longo de mais de uma variável, por exemplo, para ordenar quadros de dados, consulte a ordem.
+```{r}
+BaseDadosOrdenadaSORT <- sort(BaseDados$Categoria)
+BaseDadosOrdenadaSORT
+```
+
+06) Função names
+Ebibir nomes das colunas do dataset
+```{r}
+names(BaseDadosOrdenada)
+```
+07) which
+Fornece os índices TRUE de um objeto lógico, permitindo índices de array. Usado para filtragem de dados
+```{r}
+ENTRADAS <- BaseDados[which(BaseDados$`E/S`=="Entrada"),]
+ENTRADAS
+```
+
+08) Quantificar o número de registros de ENTRADAS
+```{r}
+nrow(ENTRADAS)
+```
+
+
+09)Obter o somatório de todos os valores continos na coluna valor (coluna 6)
+```{r}
+colSums(ENTRADAS[6])
+```
+```{r}
+BaseDados[3]
+```
+
+10)Função wordcloud
+A função wordcloud cria uma núvel de palavras
+```{r}
+library(tm)
+require(tm)
+library(wordcloud)
+require(wordcloud)
+
+wordcloud(BaseDados$Estado, colors = c("orange","blue"))
+```
+11) Função count
+A função count() contabiliza a frequência dos valores das variáveis que se repetem. 
+```{r}
+library(dplyr)
+require(dplyr)
+countESTADO <- count(BaseDados, BaseDados$Estado, sort = TRUE)
+countESTADO
+```
+
+```{r}
+countESTADO$n[1]
+```
+
+
+```{r}
+countESTADO.df <- data.frame(countESTADO)
+```
+
+```{r}
+library(ggplot2)
+# Basic barplot
+p<-ggplot(data=countESTADO.df, aes(x=countESTADO.df$BaseDados.Estado, y=countESTADO.df$n)) +
+  geom_bar(stat="identity", fill=c("blue", "red", "green", "orange"))
+p
+   
+# Horizontal bar plot
+p + coord_flip()
+```
+
+
+```{r}
+# Outside bars
+ggplot(data=countESTADO.df, aes(x=countESTADO.df$BaseDados.Estado, y=countESTADO.df$n)) +
+  geom_bar(stat="identity", fill="steelblue")+
+  geom_text(aes(label=countESTADO.df$n), vjust=-0.3, size=6)+
+  theme_minimal()
+# Inside bars
+ggplot(data=countESTADO.df, aes(x=countESTADO.df$BaseDados.Estado, y=countESTADO.df$n)) +
+  geom_bar(stat="identity", fill="steelblue")+
+  geom_text(aes(label=countESTADO.df$n), vjust=1.6, color="white", size=6)+
+  theme_minimal()
+  #label=countESTADO.df$n serve para exibir os valores de cada estado em cada BARRA
+```
+
+
+
+```{r}
+# Outside bars
+ggplot(data=countESTADO.df, aes(x=countESTADO.df$BaseDados.Estado, y=countESTADO.df$n)) +
+  geom_bar(stat="identity", fill="steelblue")+
+  geom_text(aes(label=countESTADO.df$n), vjust=-0.3, size=3.5)+
+  theme_minimal()
+# Inside bars
+ggplot(data=countESTADO.df, aes(x=countESTADO.df$BaseDados.Estado, y=countESTADO.df$n)) +
+  geom_bar(stat="identity", fill="steelblue")+
+  geom_text(aes(label=countESTADO.df$n), vjust=1.6, color="white", size=3.5)+
+  theme_minimal()
+```
+
+
+
+
+
+```{r}
+barplot(countESTADO$n, main="Projetos por Estado", horiz=FALSE, ylim = c(0, 20), col = c("red", "orange", "green", "blue"), legend = c("RJ", "MG", "SP", "SC"), args.legend = list(title = "ESTADOS", x = "topright", cex = .7),
+  names.arg=countESTADO$`BaseDados$Estado`) +  geom_text(aes(label=countESTADO.df$n), vjust=1.6, color="white", size=9) + theme_minimal()
+```
+
+
+```{r}
+library(tidyverse)
+dat <- tibble::tribble(
+  ~sample_id, ~time, ~value,
+     "gghjk",   0.5,    0.8,
+     "gghjk",     1,      2,
+     "gghjk",   1.5,    2.1,
+     "gghjk",     2,    2.2,
+     "gghjk",   2.5,      3,
+     "gghjk",     3,    3.2,
+     "gghjk",   3.5,    3.4,
+     "gghjk",     4,    3.5,
+     "gghjk",   4.5,    3.6,
+     "gghjk",     5,      4,
+     "lknnm",   0.5,    0.3,
+     "lknnm",     1,    1.5,
+     "lknnm",   1.5,    1.6,
+     "lknnm",     2,    1.7,
+     "lknnm",   2.5,    2.5,
+     "lknnm",     3,    2.7,
+     "lknnm",   3.5,    2.9,
+     "lknnm",     4,      3,
+     "lknnm",   4.5,    3.1,
+     "lknnm",     5,    3.5
+  )
+dat %>%
+  ggplot(aes(x = time, y = value, group = sample_id)) +
+  geom_line(aes(colour = sample_id))
+```
+
+
+```{r}
+BaseDados %>%
+  ggplot(aes(x = BaseDados$`E/S`, y = BaseDados$Valor, group = BaseDados$`E/S`)) +
+  geom_line(aes(colour = BaseDados$`E/S`))
+```
+

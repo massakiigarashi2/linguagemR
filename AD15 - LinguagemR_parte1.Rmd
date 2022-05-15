@@ -1,0 +1,339 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+---
+
+00) Manipulação de memória para bases de dados muito grande
+memory.size () relata a alocação de memória atual ou máxima da função malloc usada nesta versão de R.
+memory.limit () reporta ou aumenta o limite em vigor na alocação total.
+```{r}
+memory.size()
+memory.limit(size=32000)
+```
+
+```{r}
+help(read.csv)
+```
+
+00) OBSERVAÇÕES IMPORTANTES:
+
+- Os arquivos de anotações conhecidos como R Notebook apresetam uma espécie de PEDAÇO DE EXECUÇÃO, popularmente ocnhecidos como CHUNK. Para adicionar um novo CHUNK basta pressionar Ctrl + Alt + I
+
+- Ao pressionar Ctrl + L na ABA CONSOLe você consege limpar o console que exibe o histórico de operações executadas
+- É importante saber que na linguagem R NÃO É NECESSÁRIO DECLARAR O TIPO DA VARIÁVEL assim como ocorre na linguagem de programação C++. A linguagem R, por padrão, decide qual o tipo mais adequado de dados a utilizar, baseando-se no contexto. Se uma string de texto for atribuída a uma variável, essa variável será do tipo caractere; caso um número inteiro seja atribuído, será um tipo numérico, e assim por diante. Devido a esta funcionalidade, a linguagem R é conhecida por ser fracamente tipada.
+- Na linguagem R será praticamente impossível você não necessitar fazer uso de bibliotecas e pacotes de funções previamente programadas por outros usuários; portanto, você precisa saber que a principal fonte, e também a fonte oficial destes pacotes é denominada Repositório CRAN (https://cran.r-project.org/).
+- A forma mais fácil de instalar uma pacote [e através da ABA PACKAGES, clicando na OPÇÃO INSTALL
+- A seguir, listarei outras formas de se instalar, atribuir e requisitar estes pacotes:
+
+install.packages(NomeDoPacote)
+library(NomeDoPacote)
+require(NomeDoPacote)
+
+- Também é possível inserir manualmente pacotes através de arquivos.TAR, basta ir na opção install em Packages e mudar a opção para Package ARchive File (.zip, .tar, .gz)
+
+```{r}
+# Needed <- c("tm", "SnowballC", "RColorBrewer", "ggplot2", "wordcloud", "biclust", "cluster", "igraph", "fpc")
+# install.packages(Needed, dependencies = TRUE)
+library("tidyverse")
+library("dplyr")
+library("tm")
+library("SnowballC")
+library("wordcloud")
+library("biclust")
+library("cluster")
+library("igraph")
+library("fpc")
+```
+
+PASSO 01) Definir a PASTA DE TRABALHO e IMPORTAR o ARQUIVO DA BASE DE DADOS
+---------------------------------------------------------------------------------------------------------------------
+01.0) IMPORTAÇÃO DE ARQUIVOS .CSV
+Função read.csv (Para bases em ingles, ou seja, separação decimal por PONTO)
+Função read.csv2(Para bases em Português, ou seja, separação decimal por VÍRGULA)
+As funções read Lêem um arquivo em formato CSV de tabela e cria um quadro de dados a partir dele, correspondendo a linhas e variáveis num arquivo. A base de dados importada passa a ser um data.frame
+--------------------------------------------------------------------------------------------------------------------
+O data.frame é talvez um dos conceitos mais importantes na linguagem R. No data.frame cada coluna representa uma variável e cada linha uma observação, ou seja, uma leitura desta variável.O data.frame é um quadro de dados, esses quadros compartilham muitas das propriedades de matrizes e de listas, usadas como a estrutura de dados fundamental pela maioria dos softwares de modelagem de R.
+É importante saber que para acessar individualmente as colunas de um data.frame basta colocar o NOME_DO_DATA.FRAME seguido do SÍMBOLO $
+```{r}
+
+setwd("F://MCK20 - AD//Semana 09 - AD_Linguagem_R_Parte_1_e_2")
+RetornoInvestimento.df <- read.csv(
+  "F://MCK20 - AD//Semana 09 - AD_Linguagem_R_Parte_1_e_2//ProjetoRetornoInvestimento.csv", 
+  header = TRUE, 
+  sep = ",", 
+  quote = "\"", 
+  dec = ".", 
+  fill = TRUE, 
+  comment.char = "", 
+  #nrows = 7
+  )
+```
+
+01.1) IMPORTAÇÃO DE ARQUIVOS .XLS
+A função readxl_example usa o caminho e o nome do arquivo entre aspas para importar o arquvo da base de dados
+Ela é seguida da função read_excel para que seja possível a manipulação das planilhas idividuais de uma pasta de trabalho
+```{r}
+library(readxl)
+setwd("F://MCK20 - AD//Semana 09 - AD_Linguagem_R_Parte_1_e_2")
+
+BaseDadosAulaBI_Alunos <- read_excel(
+  "F://MCK20 - AD//Semana 09 - AD_Linguagem_R_Parte_1_e_2//BaseDadosAulaBI.xlsx", 
+  sheet = "Inf.Alunos",
+  range = NULL, 
+  col_names = TRUE, 
+  col_types = NULL, 
+  na = "", 
+  trim_ws = TRUE, 
+  skip = 0,
+  #n_max = 5, guess_max = min(1000, 5),
+  progress = readxl_progress(),
+  )
+```
+
+
+```{r}
+BaseDadosAulaBI_Cursos <- read_excel("BaseDadosAulaBI.xlsx", 
+  sheet = "CursosGraduacao",
+  range = NULL, 
+  col_names = TRUE, 
+  col_types = NULL,
+  na = "", 
+  trim_ws = TRUE, 
+  skip = 0,
+  progress = readxl_progress(),
+  )
+```
+
+```{r}
+BaseDadosAulaBI_Bolsas <- read_excel(
+  "F://MCK20 - AD//Semana 09 - AD_Linguagem_R_Parte_1_e_2//BaseDadosAulaBI.xlsx", 
+  sheet = "Inf.Bolsas", 
+  range = NULL, 
+  col_names = TRUE,
+  col_types = NULL,
+  na = "", 
+  trim_ws = TRUE, 
+  skip = 0,
+  )
+```
+
+01.2) Função View(NomeDoDataFrame)
+A função View invoca um visualizador de dados no estilo planilha em um objeto R semelhante a uma matriz. 
+```{r}
+View(BaseDadosAulaBI_Alunos)
+View(BaseDadosAulaBI_Cursos)
+View(BaseDadosAulaBI_Bolsas)
+```
+
+
+02)Função summary
+A função summary (resumo) é uma função genérica usada para produzir resumos de resultados dos resultados de várias funções de ajuste de modelo. A função invoca métodos específicos que dependem da classe do primeiro argumento.
+```{r}
+summary(BaseDadosAulaBI_Alunos)
+summary(BaseDadosAulaBI_Cursos)
+summary(BaseDadosAulaBI_Bolsas)
+```
+
+03) As Funções head e tail 
+Retornam, respectivamente, a primeira ou a última parte do data.frame. 
+Estas funções são muito úteis principalmente quando se tem uma base de dados muito grande
+```{r}
+#Teste da função head
+Alunos.H <- head(BaseDadosAulaBI_Alunos)
+Cursos.H <- head(BaseDadosAulaBI_Cursos)
+Bolsas.H <- head(BaseDadosAulaBI_Bolsas)
+View(Alunos.H)
+View(Cursos.H)
+View(Bolsas.H)
+#Teste da função tail
+Alunos.T <- tail(BaseDadosAulaBI_Alunos)
+Cursos.T <- tail(BaseDadosAulaBI_Cursos)
+Bolsas.T <- tail(BaseDadosAulaBI_Bolsas)
+View(Alunos.T)
+View(Cursos.T)
+View(Bolsas.T)
+```
+
+04) Função order
+A função order retorna uma permutação que reorganiza seu primeiro argumento em ordem crescente ou decrescente, quebrando os laços por argumentos adicionais. sort.list faz o mesmo, usando apenas um argumento. Veja os exemplos de como usar essas funções para classificar quadros de dados, etc.
+```{r}
+BaseDadosAulaBI_Alunos[order(BaseDadosAulaBI_Alunos$PERIODO_INGRESSO,
+BaseDadosAulaBI_Alunos$DT_NASCIMENTO
+),]
+```
+
+05) Função names
+Ebibir nomes das colunas do dataset
+```{r}
+names(BaseDadosAulaBI_Alunos)
+```
+
+```{r}
+names(BaseDadosAulaBI_Cursos)
+```
+
+```{r}
+names(BaseDadosAulaBI_Bolsas)
+```
+
+06) which
+Fornece os índices TRUE de um objeto lógico, permitindo índices de array. Usado para filtragem de dados
+```{r}
+AlunosManha <- BaseDadosAulaBI_Alunos[which(BaseDadosAulaBI_Alunos$TURNO=='MANHA'),]
+View(AlunosManha)
+```
+
+
+07)Função wordcloud
+A função wordcloud cria uma núvel de palavras
+```{r}
+library(wordcloud)
+require(wordcloud)
+```
+
+
+```{r}
+wordcloud(BaseDadosAulaBI_Alunos$TIPO_INGRESSO, colors = c("orange", "red", "blue"))
+wordcloud(BaseDadosAulaBI_Alunos$MODALIDADE)
+wordcloud(BaseDadosAulaBI_Alunos$TURNO)
+```
+
+
+
+08) Função count
+A função count() contabiliza a frequência dos valores das variáveis que se repetem. 
+```{r}
+qtdTipoIngresso <- count(BaseDadosAulaBI_Alunos, BaseDadosAulaBI_Alunos$TIPO_INGRESSO, sort = TRUE)
+qtdTipoIngresso
+```
+
+```{r}
+qtdTipoIngresso$n[1]
+```
+
+```{r}
+x <- qtdTipoIngresso$`BaseDadosAulaBI_Alunos$TIPO_INGRESSO`
+y <- qtdTipoIngresso$n
+x
+y
+```
+
+
+```{r}
+TipoIngresso.df <- data.frame(x=x, y=y)
+View(TipoIngresso.df)
+```
+
+
+09) Trocar valores NA
+```{r}
+#myDataframe[is.na(myDataframe)] = 0
+TipoIngresso.df[is.na(TipoIngresso.df)] = 0
+```
+
+```{r}
+View(TipoIngresso.df)
+```
+
+
+```{r}
+pie(x = TipoIngresso.df$y,labels = TipoIngresso.df$x, col=rainbow(length(TipoIngresso.df$x)),
+   main="Pie Chart - Tipo de Ingresso ")
+```
+
+```{r}
+vmax = max(TipoIngresso.df$y)
+vmax
+```
+
+
+```{r}
+for(i in 1:length(TipoIngresso.df$x)){
+  TipoIngresso.df$y[i] = TipoIngresso.df$y[i]/vmax 
+}
+TipoIngresso.df
+```
+
+
+```{r}
+y <- numeric(8)
+x <- intToUtf8(y)
+```
+
+
+```{r}
+for(i in 2:length(TipoIngresso.df$x)){
+  x[i-1] = TipoIngresso.df$x[i]
+  y[i-1] = round(TipoIngresso.df$y[i]*100, 3)
+}
+TipoIngresso2.df <- data.frame(x,y)
+TipoIngresso2.df
+```
+
+```{r}
+names(TipoIngresso2.df)
+```
+
+```{r}
+colnames(TipoIngresso2.df) <- c("TIPO INGRESSO", "PORCENTAGEM")
+names(TipoIngresso2.df)
+TipoIngresso2.df
+```
+
+
+
+```{r}
+pie(x = TipoIngresso2.df$PORCENTAGEM,labels = TipoIngresso2.df$`TIPO INGRESSO`, col=rainbow(length(TipoIngresso2.df$`TIPO INGRESSO`)),
+   main="Pie Chart - Tipo de Ingresso ")
+```
+
+```{r}
+barchart(x = TipoIngresso2.df$PORCENTAGEM,labels = TipoIngresso2.df$`TIPO INGRESSO`, col=rainbow(length(TipoIngresso2.df$`TIPO INGRESSO`)),
+   main="Bar Chart - Tipo de Ingresso ")
+```
+
+## Agora vamos apreder a fazer gráficos a partir da biblioteca PLOTLY
+```{r}
+library(plotly)
+```
+
+```{r}
+ds <- data.frame(labels = c("A", "B", "C"), values = c(10, 40, 60))
+plot_ly(ds, labels = ~labels, values = ~values) %>%
+  add_pie() %>%
+  layout(title = "Basic Pie Chart using Plotly")
+  
+data(wind)
+plot_ly(wind, r = ~r, t = ~t) %>% 
+  add_area(color = ~nms) %>%
+  layout(radialaxis = list(ticksuffix = "%"), orientation = 270)
+```
+
+```{r}
+plot_ly(TipoIngresso2.df, labels = TipoIngresso2.df$`TIPO INGRESSO`, values = TipoIngresso2.df$PORCENTAGEM) %>%
+  add_pie() %>%
+  layout(title = "Basic Pie Chart using Plotly")
+  
+data(wind)
+plot_ly(wind, r = ~r, t = ~t) %>% 
+  add_area(color = ~nms) %>%
+  layout(radialaxis = list(ticksuffix = "%"), orientation = 270)
+```
+```{r}
+library(flexdashboard) 
+gauge(42, min = 0, max = 100, symbol = '%', gaugeSectors( success = c(80, 100), warning = c(40, 79), danger = c(0, 39) ))
+```
+
+
+
+```{r}
+library(flexdashboard) 
+gauge((TipoIngresso2.df$PORCENTAGEM[1]), min = 0, max = 100, symbol = '%', gaugeSectors( success = c(80, 100), warning = c(40, 79), danger = c(0, 39) ))
+```
+
+```{r}
+sum(TipoIngresso2.df$PORCENTAGEM)
+```
+

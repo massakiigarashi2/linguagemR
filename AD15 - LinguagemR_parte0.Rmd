@@ -1,0 +1,421 @@
+---
+title: "INTRODUÇÃO A LINGUAGEM R (PARTE 0) - Prof. Massaki de O. Igarashi"
+output:
+  html_document:
+    df_print: paged
+  html_notebook: default
+  pdf_document: default
+---
+Acesse o site RStudioCloud (https://rstudio.cloud/project/1386399)
+WorkSpace: RprofMassaki01
+Você pode usar uma conta Google para entrar
+
+Os códigos que estiverem conforme a seguir
+```{r}
+#códigoR, O "Hachtag" serve para fazer comentários em linguagem R
+```
+podem ser executados ao clicar a sequência *Ctrl+Shift+Enter*. 
+Para adicionar Código R (chunk) badta clicar a sequência *Ctrl+Alt+I*.
+***********************************************************************
+
+******** AGORA VAMOS COMEÇAR NOSSAS NOTAS PRÁTICAS DE AULA ************
+00) Os comentários em R são precedidos por #
+
+01) Primeiramente vamos aprender como se instala e utiliza bibliotecas:
+
+install.packages("NomeDaBiblioteca")
+library(NomeDaBiblioteca)
+
+Mas você também pode usar o painel à direita para instalar e executar bibliotecas na Linguagem R, é até mais prático do que memorizar isto
+
+*****************Agora vamos dar nossos primeiros pasos!****************
+
+02) A linguagem R usa <- para atribuir valores a um vetor; usando, por exmeplo,
+o comando c(), que combina(COMBINE) os valores que estão entre ()
+
+```{r Conceito02}
+x<-c(1,2,3,4,5,6)
+x
+```
+03)O comando COMBINE também pode ser usado para gerar um vetor x com valores inteiros com passo 1; por exemplo, preencher o vetor x com valores de -3 até 3, com passo 1
+```{r Conceito03}
+x <- c(-3:3)
+x
+```
+04)Mas caso a necessidade fosse preencher o vetor x com valores de -2 a 2, porém, passo 0.5, deveria ser usado o comando seq, para gerar uma SEQUENCIA NUMERICA com PASSO A SER DETERMINADO POR VOCÊ
+
+```{r Conceito04}
+x <- seq(-2, 2, 0.5); 
+x
+```
+05) Pode se usar o comando MEAN para calcular a MÉDIA dos valores inseridos no vetor x
+```{r}
+x<-c(1,2,3,4,5,6)
+x
+mean(x)
+```
+06)Ou o camando SD() para calcular o desvio padrão dos dados contidos no vetor
+```{r}
+x<-c(1,2,3,4,5,6)
+x
+sd(x,na.rm = TRUE) 
+#na.rm	serve para informar parâmetro LÓGICO
+
+```
+07) Você também pode, a qualquer instante acessar o HELP de qualquer digitando help(mean):
+
+```{r}
+help(sd)
+```
+
+08)O comando combine também pode ser usado para criar um vetor com valores que contenham PAUSAS NO PASSO, por exemplo 1 7 8 9
+```{r}
+x <- c(1,7:9)
+x
+```
+09)Outra forma de atribuir valores é usando a função ASSIGN: 
+   O fomarto dela é assign(“ ”,...); 
+   Entre as aspas, coloque a variavél, 
+   e depois da vírgula o valor dela. 
+   O comando assign é USADO  PARA MUDAR VALOR DE VARIAVEIS, como no exemplo a seguir:
+   
+```{r}
+r <- 5
+assign("r", 10)
+r
+```
+10) NA LINGUAGEM R NÃO É NECESSÁRIO DECLARAR O TIPO DA VARIÁVEL, VETOR OU MATRIZ; basta atribuir diretamente uma STRING, valor inteiro ou com ponto flutuante sem precisar se preocupar;
+```{r}
+#exemplo de atribuição de String
+mae <- "Maria"
+pai <- "Jose"
+mae == "Maria" #Pode-se fazer verificação lógica diretamente
+mae == "Jose"
+if (mae == "Maria") 
+{ print("Você acertou!")}
+```
+
+EXEMPLOS DE ATRIBUIÇÕES DIRETAS E OPERAÇÕES BÁSICAS
+```{r}
+#exemplo de operações matemáticas básicas
+2+3
+4-9
+5*2
+4/8
+6^2
+exp(28)
+log(54)
+log(125, 5) #Log de 125 na base 5
+sqrt(81)
+x <- c(0:10)    
+#aqui x é um vetor que contém números inteiros de 0 a 10 com passo 1
+x
+a <- 2.5
+#a Variável a é uma constante de valor 2.5 (ponto flutuante)
+b <- 1
+#a Variável b é uma constante com valor inteiro igual a 1
+y <- a*x + b
+#a Variável y receberá o resultado do cálculo a*x + b
+y
+#Agora usarmeos o comando plot para exibir este gráfico linear
+plot(x,y,
+     type = "p",      # p = pontos, l = linha, b = Ponto-Linha
+     main = "Meu 1º Gráfico Plot()",
+     xlab = "Título do Eixo X",
+     ylab = "Título do Eixo Y",
+     xlim = c(0, 10), # Min and max values for x-axis
+     ylim = c(0, 30), # Min and max values for y-axis
+     col = "blue",    # Color of the points
+     pch = 16,        # Type of symbol (16 means Filled circle)
+     cex = 1)         # Size of the symbols
+
+```
+10)Operações com numeros complexos também são possíveis de forma bastante direta e prática
+```{r}
+num1 <- 3 + 2i
+num2 <- 5 + 3i
+num3 <- num1 + num2
+num3
+num4 <- num1*num2
+num4
+num5 <- num1/num2
+num5
+```
+11)Anteriormente você aprendeu a usar o comando plot(), porém, ele só é útil para criar gráficos xy com pontos inteiros e sem cálculos. 
+Caso fosse necessário criar um gráfico linear ou quadrático com as equações diretamente nele, o mais apropriado é usar o comando CURVE
+```{r}
+#Exemplo de GRÁFICO LINEAR
+x <- c(0:10)
+curve(3*x +1, -1, 1, col = "green")
+```
+
+```{r}
+#EXEMPLO DE GRÁFICO QUADRÁTICO
+x <- c(0:10)
+curve(3*x^2 +2*x -1, -1, 1, col = "green")
+```
+
+12) Inclusive pode-se fazer SOBREPOR MAIS DE UM GRÁFICO
+
+```{r}
+x <- c(0:10)
+curve(3*x+1, -2, 2, col = "green")
+curve(x^2 - 2, add = TRUE, col = "violet")
+curve(x^2 - 1, add = TRUE, col = "blue")
+```
+
+
+```{r}
+plot(x = 1:10,                         # x-coordinates
+     y = 1:10,                         # y-coordinates
+     type = "p",                       # Just draw points (no lines)
+     main = "Meu 1º Gráfico usando comando Plot()",
+     xlab = "Título do Eixo X",
+     ylab = "Título do Eixo Y",
+     xlim = c(0, 11),                  # Min and max values for x-axis
+     ylim = c(0, 11),                  # Min and max values for y-axis
+     col = "blue",                     # Color of the points
+     pch = 16,                         # Type of symbol (16 means Filled circle)
+     cex = 1)                           # Size of the symbols
+
+```
+13) ENTRADA DE DADOS VIA TECLADO
+A função scan() lê dados diretamento do console, isto é, coloca o R em modo prompt onde o usuário deve digitar cada dado seguido da tecla Enter. Para encerrar a entrada de dados basta digitar Enter duas vezes consecutivas.
+
+Veja o seguinte resultado:
+
+```{r}
+#v <- scan()
+#resp = mean(v)
+#resp
+```
+
+14) Pode-se também criar funções que solicitem que o usuário responda e/ou entre com informações na medida que são solicitadas. Experimente definir e rodar o função a seguir.
+```{r}
+#fn.ex <- function() {
+#    cat("Digite o nome do time de futebol de sua preferência (em letras minúsculas)\n")
+#    time <- readLines(n = 1)
+#    if (time == "Palmeiras")
+#        cat("Alguns dizem que o Palmeiras não tem mundial; mas em 2007 a FIFA reconheceu que ele ganhou a COPA RIO em 1951!!!\n")
+#    else cat("Poxa, pensei que vc torcesse para outro time!\n")
+#    return(invisible())
+#}
+#fn.ex()
+```
+
+15)MANIPULAÇÃO DE VETORES - Parte 1 de 4
+
+```{r}
+# Pode-se inserir dados String num vetor apenas usando ""
+VetorString<-c("hello","friend","how","are","you?")
+VetorString
+# Ou criar uma vetor Concatenando outro vetor com dados quaisquer
+vec1<-c(1:7) 
+vec1
+vec6<-c(-1,0,vec1,0) 
+vec6
+# Posso também criar um vetor com vários intervalos distintos
+c(1:10,23:27)
+# Posso também NOMEAR elementos dos vetores, ISTO SERIA ÚTIL NA EXIBIÇÃO DE TABELAS DE DADOS: 
+# - Ter o vetor com os elementos escolhidos já pronto! 
+# - Usar names(nome do vetor escolhido <-c(“nome”,“nome”..))
+x<-c(1,2,3,4)
+names(x)<-c("Verde","Amarelo","Azul","Branco") 
+x
+# POSSO REALIZAR OPERAÇÕES BÁSICAS COM VETOR APENAS USANDO O COMANDO c()
+# - Adição com vetores
+c(1,2,3)+c(3,2,0)
+# 
+# Ou criar inicialmente dois vetores e em seguida somar os mesmos algebricamente
+x<-c(1,0,1) 
+y<-c(2,-1,3) 
+x+y
+# Ou realizar o SOMATÓRIO DE TODOS OS ELEMENTOS DO VETOR X 
+sum(x)
+```
+
+16)MANIPULAÇÃO DE VETORES - Parte 2 de 4
+Para selecionando elementos de vetor: 
+```{r}
+vec<-c(-2,4,3,6,8,0) 
+# Exibindo o elemento na posição 4 do vetor vec
+vec[4]
+# Exibindo os elementos das posições 1 até 4 do vetor vec
+vec[1:4]
+# Exibindo os elementos da posição 1 e 6
+vec[c(1,6)]
+# Armazenando informações e exibindo os dados das posições desejadas 
+# com seus respectivos nomes
+pg<-c(4,15,33,54)
+names(pg)<-c("port","mat","hist", "CAD")
+dias<- pg[c(1,3,4)] 
+dias
+```
+
+17)MANIPULAÇÃO DE VETORES - Parte 3 de 4
+PODEUSAROCOMANDO“mean”PARACALCULARAMÉDIADOSELEMENTOSDO
+VETOR É possivél fazer comparação entre vetores: USANDO “==”,“<”,“>”,“<=”,“>=”,“!=”
+
+```{r}
+# Verificar se o primeiro vetor é maior que o segundo
+c(1,2,3)>c(2,3,4)
+# Comparando cada dado contido no vetor com o valor 3, 
+# verificando se é menor que 3
+c(1,0,4)<3
+```
+18) MANIPULAÇÃO DE VETORES usando comando SEQ() - Parte 4 de 4
+    - Informando o PRIMEIRO e o ÚLTIMO elemento
+    - Informando o PRIMEIRO, o ÚLTIMO elemento e o PASSO
+```{r}
+seq(from=1, to=5)
+seq(from=1, to=5, by=0.5)
+seq(from=0, to=10, length.out= 4)
+```
+19)MATRIZES - Parte 1 de 7
+A matrizes são arranjos dados bidimensionais do mesmo tipo (numerics, characater,string, logical) organizados em colunas e linhas(“row=linha”). 
+Para costruir uma matriz, existem os seguintes metodos: 
+- usar função “matrix()”, 
+- dentro do parenteses coloco com “:” de qual a qual número que será composta a matriz.
+- No exemplo foram usados termos como byrow=TRUE, byrow=FALSE. 
+- byrow=TRUE cria uma matriz só de linha 
+- byrow=TRUE cria uma matriz só de coluna. 
+
+```{r}
+"Posso criar uma matriz com 3 linhas, onde ele adequará automaticamente o numero necessairo de colunas conforme a quantidade de elementos"
+matrix(1:9, byrow=TRUE, nrow=3)
+"Também posso criar uma vetor com apenas 1 linha avisando que byrow=FALSE "
+matrix(1:9, byrow=FALSE, nrow=1)
+"Posso criar uma matriz B inseriondo os valores 1 a 10, alocados através de # 2 linhas e 5 colunas"
+B<- matrix(c(1:10), 2, 5)
+B
+"Ou completar o exemplo anterior avisando que ele ordene os elementos primeiramente na linha 1 "
+c<-matrix(c(1:10), 2, 5,1)
+
+"ou também posso criar uma matriz X usando o comando Array"
+X <- array(c(1:10), dim = c(2,5))
+X
+
+```
+20) MATRIZES - Parte 2 de 7
+Para calcular matriz inversa, usa-se o comando “solve(matriz escolhida)”. Lembrete: Para fazer matriz inversa, é necessário que ela seja quadrada, número de colunas igual números de linhas.
+
+```{r}
+C <- matrix(c(c(1,1,0), c(0,1,4), c(0:2)), 3,3,1)
+C
+B<-solve(C)
+B
+```
+20) MATRIZES - Parte 3
+A função solve pode ser usada para solucionar um sistema de equação, imagine o seguinte sistema: 
+x1 + x2 + 0x3 = 0 
+0  + x2 + 4x3 = 1 
+0  + x2 + 2x3 = 5 
+O que eu quero são os valores de x1,x2 e x3. E
+Eu vou criar duas matrizes, uma chamada A, formada pelos valores dos coeficientes e matriz b formada só pelos valores a direita da igualdade. No final, eu usou função solve(A,b), e encontro, em forma de matriz os valores de x.
+```{r}
+A <- matrix(c(c(1,1,0), c(0,1,4), c(0:2)), 3,3,1)
+A
+b <- array(c(0,1,5), dim=c(3,1))
+b
+x <- solve(A, b) 
+x
+```
+Outra forma de achar os valores dos x é: 
+- Calcular a matriz inversa de A, 
+- Depois multiplica Aˆ-1 por b, 
+- e encontra os x. 
+obs: para esse tipo de multiplicação usa-se “%*%" O que a gente estava fazendo antes era: A.x=b e agora:Aˆ-1.b=x
+
+```{r}
+A <- matrix(c(c(1,1,0), c(0,1,4), c(0:2)), 3,3,1)
+A
+InvA<-solve(A)
+InvA
+
+b <- array(c(0,1,5), dim=c(3,1)) 
+b
+InvA%*%b
+```
+
+21) MATRIZES - Parte 4 de 7
+Pode-se nomear as linhas e colunas das matrizes: 
+- usa-se colnames() e rownames(): 
+Com a matriz já pronta, para nomear as colunas: 
+- colnames(matriz desejada)<-c(nomes das colunas) 
+Com a matriz já pronta, para nomear as linhas: 
+- rownames(matriz desejada)<-c(nomes das linhas)
+
+```{r}
+M<-matrix(1:6,2,3,1)
+M
+colnames(M)<-c("Mary","Anna","Bill") 
+rownames(M)<-c("n° de irmãos","idade") 
+M
+```
+22) MATRIZES - Parte 5 de 7
+Para somar todos os elementos da linha da matriz uso o comando “rowSums”. Para somar todos os elementos da coluna da matriz: “colSums”. 
+(não esquecer o S é maiusculo)
+
+```{r}
+M<-matrix(1:6,2,3,1)
+M
+rowSums(M)
+colSums(M)
+```
+23) MATRIZES - Parte 6 de 7
+Para adicionar linha ou colunas numa matriz, usa-se, respectivamente: 
+rbind() e cbind(). 
+- Com a matriz pronta, crie um vetor com os valores que deseja adicionar. - - Escolha se será feita uma nova linha ou nova coluna.
+- Escreva dentro do (), primeiro o nome da matriz e depois o que será adicionado em forma de vetor.
+
+```{r}
+N<-matrix(c(c(0,1,0),c(1,0,1)),2,3,1)
+N
+rbind(N,c(0,0,0))
+```
+24) MATRIZES - Parte 7 de 7
+Para selecionar elementos da matriz usando suas posições: 
+- Com a matriz pronta; 
+- Use [,] para selecionar, 
+- primeiro coloqueo n° da linha 
+- e depois da virgula o n° da coluna que o elemento se encontra. 
+Pode usar o “:” para selecionar um intervalo maior. 
+- Para selecionar linha ou coluna inteira, respectivamente: [1,] e [,1].
+
+```{r}
+A<-matrix(c(c(1,0,0),c(0,1,0),c(0,0,1)),3,3,1)
+A
+"Exibe o elemento da linha 1 coluna 2"
+A[1,2]
+"Exibe do 1º ao 2º elemento na coluna 2"
+A[1:2,2]
+"Exibe todos os elementos da coluna 3 "
+A[,3]
+
+A<-matrix(c(c(1,0,0),c(0,1,0),c(0,0,1)),3,3,1)
+A
+mean(A)
+```
+25) O COMANDO FACTOR()
+Factor É um tipo de dado estatístico usado para armazenar variáveis categóricas, é uma classe importante para análise estatística e plotagem. Para criar factor usa função “factor()”, dentro do parenteses vão os dados. Logo depois de plotar aparece embaixo os niveís dos dados. Para trocar a ordem de importancia dos dados, os seus nivéis, use a função levels(dentro o nome do factor)<-c(ordem que você deseja). Para saber quantos levels tem o factor, use: “nlevels”
+
+```{r}
+x<-factor(c(2,3,4,5,6,2,3)) 
+x
+sex<-factor(c("male", "female","others")) 
+sex
+nlevels(sex)
+```
+26) Caso queira SABER QUANTAS VEZES CERTO DADO APARECE dentro do factor analisado, use rummay(dado avaliado):
+
+```{r}
+marvel<-factor(c("iron man","iron man","iron man","cap","cap","winter soldier","thor")) 
+summary(marvel)
+```
+
+
+
+
+Quando você salvar o bloco de notas, um arquivo HTML contendo o código e a saída será salvo ao lado dele (clique no botão *Preview* ou pressione *Ctrl + Shift + K* para visualizar o arquivo HTML).
+
+A visualização mostra uma cópia HTML renderizada do conteúdo do editor. Consequentemente, ao contrário de *Knit*, *Preview* não executa nenhum pedaço de código R. Em vez disso, a saída do pedaço quando foi executada pela última vez no editor é exibida.
