@@ -1,0 +1,69 @@
+---
+output:
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(ggmap)
+library(ggplot2)
+
+require(RgoogleMaps)
+require(ggplot2)
+require(ggmap)
+require(plyr)
+```
+
+
+```{r}
+cidades <- c("Belo Horizonte MG","Contagem MG", "Juiz de Fora MG",
+             "Uberlandia MG", "Montes Claros MG", "Uberaba MG",
+             "Varginha MG", "Governador Valadares MG", "Salto da Divisa MG",
+             "Para de Minas MG", "Bom Despacho MG", "Manhuacu MG",
+             "Rio Casca MG", "Tres Coracoes MG", "Tres Pontas MG",
+             "Sao Sebastiao do Paraiso MG", "Iturama MG", "Joaima MG",
+             "Vicosa MG", "Montalvania MG", "Frutal MG", "Ipatinga MG",
+             "Aimores MG", "Muriae MG", "Januaria MG")
+DF <- data.frame(cidade=cidades, lat=NA, lon=NA)
+```
+
+```{r}
+getGeoCode("Belo Horizonte, Minas Gerais, Brazil")
+getGeoCode("Uberlândia MG")
+
+DF <- with(DF,data.frame(cidade=cidade, t(sapply(DF$cidade, getGeoCode))))
+knitr::kable(DF, format="markdown", digits=4)
+
+x<-ldply(DF$cidade, function(x) getGeoCode(x))
+knitr::kable(
+  data.frame(cidade=cidades,x),
+  format="markdown",
+  digits=4)
+
+box <- make_bbox(lon, lat, data = DF)
+map <-
+  ggmap(
+    get_map(location = box, maptype="toner", source="stamen")
+    ) +
+  geom_point(data=DF, x=DF$lon, y=DF$lat, color="red")
+#map
+
+maptype = c("terrain", "satellite", "roadmap", "hybrid", "toner", "watercolor")
+
+source = c("google", "osm", "stamen", "cloudmade")
+
+map <-
+  ggmap(
+    get_map(location = box, maptype="terrain", source="google", color="bw")
+    ) +
+  geom_point(data=DF, x=DF$lon, y=DF$lat, color="red")
+
+map
+```
+
+
+```{r}
+print(DF)
+```
+
+
